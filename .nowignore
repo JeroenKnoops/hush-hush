@@ -1,0 +1,10 @@
+*.test.js
+__snapshots__
+coverage
+node_modules
+tools
+.next
+/*.*
+workspaces/web-app/*.*
+!workspaces/web-app/babel.config.js
+!workspaces/web-app/package.json

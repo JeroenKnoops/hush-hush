@@ -7,11 +7,27 @@ exports[`index has proper styling 1`] = `
 }
 
 <div>
-  <h1
-    class="emotion-0 emotion-1"
-    color="#ff80c3"
-  >
-    Welcome to next.js!
-  </h1>
+  <div>
+    <div>
+      <a
+        href="/"
+        style="margin-right: 15px;"
+      >
+        Home
+      </a>
+      <a
+        href="/about"
+        style="margin-right: 15px;"
+      >
+        About
+      </a>
+    </div>
+    <h1
+      class="emotion-0 emotion-1"
+      color="#ff80c3"
+    >
+      Welcome to next.js!
+    </h1>
+  </div>
 </div>
 `;

@@ -19,12 +19,11 @@ module.exports = function (api) {
 function setupPresets (babelEnv) {
   let presetEnv = '@babel/preset-env'
 
-  if (babelEnv === 'es' || babelEnv === 'umd') {
+  if (babelEnv === 'es') {
     presetEnv = [
       '@babel/preset-env',
       {
-        modules: false,
-        exclude: ['transform-regenerator']
+        modules: false
       }
     ]
   }
@@ -43,12 +42,14 @@ function setupPlugins (babelEnv) {
         { sourceMap: true, autoLabel: true }
       ],
       '@babel/plugin-proposal-object-rest-spread',
-      '@babel/plugin-proposal-class-properties'
+      '@babel/plugin-proposal-class-properties',
+      '@babel/plugin-transform-runtime'
     ]
   } else {
     return [
       '@babel/plugin-proposal-object-rest-spread',
-      '@babel/plugin-proposal-class-properties'
+      '@babel/plugin-proposal-class-properties',
+      '@babel/plugin-transform-runtime'
     ]
   }
 }
