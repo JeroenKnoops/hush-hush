@@ -1,9 +1,9 @@
 {
   "version": 2,
-  "name": "top-secret",
+  "name": "hush-hush",
   "builds": [{ "src": "workspaces/web-app/package.json", "use": "@now/next" }],
   "routes": [
     { "src": "/(.*)", "dest": "/workspaces/web-app/$1" }
   ],
-  "alias": "top-secret"
+  "alias": "hush-hush"
 }
