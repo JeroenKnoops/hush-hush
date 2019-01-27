@@ -1,6 +1,6 @@
 # hush-hush
 
-A simple secret sharing system based on Cogito Identity framework.
+A simple secret sharing app based on Cogito Identity framework.
 
 ## Quick Start
 
