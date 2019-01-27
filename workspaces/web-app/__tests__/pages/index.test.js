@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from 'react-testing-library'
-import Home from './index'
+import Home from '../../pages/index'
 
 describe('index', () => {
   it('has proper styling', () => {

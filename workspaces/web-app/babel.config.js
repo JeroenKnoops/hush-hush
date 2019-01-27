@@ -22,7 +22,7 @@ function setupPresets (babelEnv) {
   return [
     [
       'next/babel', {
-        "preset-env": { modules: false }
+        'preset-env': { modules: false }
       }
     ],
     [

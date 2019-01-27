@@ -1,5 +1,4 @@
-*.test.js
-__snapshots__
+__tests__
 coverage
 node_modules
 tools
