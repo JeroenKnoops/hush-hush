@@ -1,17 +1,35 @@
-# monorepo-nextjs-emotion-starter
+# hush-hush
 
-A starter project for a monorepo with a [nextjs]-based workspace that uses [emotion] css-in-js (with SRR support).
+A simple secret sharing system based on Cogito Identity framework.
 
-This repository was created to capture a monorepo setup that:
+## Quick Start
 
-- has a workspace having nextjs-based frontend,
-- has ready-to-use, top-level testing setup based on jest and [react-testing-library]
+```bash
+$ yarn
+$ yarn test # optionally with --no-cache
+$ cd workspaces && yarn dev
+```
 
-Successive commits add more features and examples.
+## Deploying to zeit
 
-> Please check [react-frontend-developer] for more resources for ReactJS.
+From the root:
 
-[nextjs]: https://nextjs.org
-[emotion]: https://emotion.sh
-[react-testing-library]: https://blog.kentcdodds.com/introducing-the-react-testing-library-e3a274307e65
-[react-frontend-developer]: https://react-frontend-developer.club
+```bash
+$ now
+```
+
+So, nextjs builder and nextjs itself are undergoing changes in the way the deployment is handled.
+
+We like to use the serverless deployment, which is in every way better than the legacy one.
+
+That's why we are using `next@canary` because this version enables *serverless* mode.
+
+Please check and observe the following discussions:
+
+1. https://github.com/zeit/next.js/issues/5750
+1. https://github.com/zeit/now-builders/pull/150
+1. https://github.com/zeit/now-examples/pull/214
+1. https://github.com/zeit/next.js/issues/6144
+1. https://github.com/zeit/next.js/pull/5927
+1. https://github.com/zeit/next.js/issues/5846
+1. https://github.com/zeit/next.js/issues/1914 (for the discussion on `__test__` folder)
