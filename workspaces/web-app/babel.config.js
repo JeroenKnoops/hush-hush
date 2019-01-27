@@ -5,13 +5,9 @@ module.exports = function (api) {
   console.log('babelEnv=', babelEnv)
 
   const presets = setupPresets(babelEnv)
-  const plugins = setupPlugins(babelEnv)
-  const ignore = setupIgnoredFiles(babelEnv)
 
   return {
-    presets,
-    plugins,
-    ignore
+    presets
   }
 }
 
@@ -29,24 +25,5 @@ function setupPresets (babelEnv) {
       '@emotion/babel-preset-css-prop',
       emotion
     ]
-  ]
-}
-
-function setupPlugins (babelEnv) {
-  // if (babelEnv === 'production') {
-  //   return [
-  //     ['emotion', { 'hoist': true }]
-  //   ]
-  // } else {
-  //   return [
-  //     ['emotion', { sourceMap: true, autoLabel: true }]
-  //   ]
-  // }
-}
-
-function setupIgnoredFiles (babelEnv) {
-  return [
-    '**/*.test.js',
-    '**/__mocks__/**'
   ]
 }

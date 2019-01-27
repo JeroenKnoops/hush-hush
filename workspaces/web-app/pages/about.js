@@ -25,7 +25,7 @@ const IconExampleSize = () => (
 )
 
 export default () => (
-  <div css={{backgroundColor: 'white'}}>
+  <div css={{ backgroundColor: 'white' }}>
     <Header />
     <p>This is the about page</p>
     <IconExampleSize />
