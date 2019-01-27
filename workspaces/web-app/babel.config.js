@@ -16,21 +16,32 @@ module.exports = function (api) {
 }
 
 function setupPresets (babelEnv) {
+  const emotion = babelEnv === 'production'
+    ? { 'hoist': true }
+    : { sourceMap: true, autoLabel: true }
   return [
-    'next/babel'
+    [
+      'next/babel', {
+        "preset-env": { modules: false }
+      }
+    ],
+    [
+      '@emotion/babel-preset-css-prop',
+      emotion
+    ]
   ]
 }
 
 function setupPlugins (babelEnv) {
-  if (babelEnv === 'production') {
-    return [
-      ['emotion', { 'hoist': true }]
-    ]
-  } else {
-    return [
-      ['emotion', { sourceMap: true, autoLabel: true }]
-    ]
-  }
+  // if (babelEnv === 'production') {
+  //   return [
+  //     ['emotion', { 'hoist': true }]
+  //   ]
+  // } else {
+  //   return [
+  //     ['emotion', { sourceMap: true, autoLabel: true }]
+  //   ]
+  // }
 }
 
 function setupIgnoredFiles (babelEnv) {
