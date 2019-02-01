@@ -22,10 +22,11 @@ class Recipient extends Component {
   }
 
   onSubmit = event => {
-    this.props.onSubmit && this.props.onSubmit(this.state.recipient)
-    this.setState({ recipient: '' })
-    this.recipientField.current.focus()
     event.preventDefault()
+  }
+
+  onDone = telepathChannel => {
+    this.props.onSubmit && this.props.onSubmit(this.state.recipient, telepathChannel)
   }
 
   validRecipient = () => {
@@ -54,7 +55,7 @@ class Recipient extends Component {
             required
             autocomplete='email'
             onChange={this.onChange} />
-          <Connector disabled={this.submitDisabled()} />
+          <Connector disabled={this.submitDisabled()} onDone={this.onDone} />
         </Form>
       </FadingValueBox>
     )

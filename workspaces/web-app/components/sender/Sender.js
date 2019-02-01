@@ -4,23 +4,36 @@ import { PageCentered } from '@react-frontend-developer/react-layout-helpers'
 
 import { Secret } from './Secret'
 import { Recipient } from './Recipient'
+import { Encrypting } from './Encrypting'
 
-const SecretOrRecipient = ({ secret, onSecret, onRecipient }) => {
+const SecretOrRecipient = ({ secret, recipient, telepathChannel, onSecret, onRecipient, onDone }) => {
   if (secret === '') {
     return (
       <Secret onSubmit={onSecret} />
     )
-  } else {
+  } else if (recipient === '') {
     return (
       <Recipient onSubmit={onRecipient} />
+    )
+  } else {
+    return (
+      <Encrypting secret={secret}
+        recipient={recipient}
+        telepathChannel={telepathChannel}
+        onDone={onDone} />
     )
   }
 }
 
 class Sender extends React.Component {
-  state = {
+  initialState = {
     secret: '',
     recipient: ''
+  }
+
+  constructor () {
+    super()
+    this.state = this.initialState
   }
 
   onSecret = secret => {
@@ -28,9 +41,13 @@ class Sender extends React.Component {
     this.setState({ secret })
   }
 
-  onRecipient = recipient => {
+  onRecipient = (recipient, telepathChannel) => {
     console.log('got your recipient:', recipient)
-    this.setState({ recipient })
+    this.setState({ recipient, telepathChannel })
+  }
+
+  onDone = () => {
+    this.setState(this.initialState)
   }
 
   render () {
@@ -41,8 +58,11 @@ class Sender extends React.Component {
           <link href='https://fonts.googleapis.com/css?family=Roboto+Mono' rel='stylesheet' />
         </Head>
         <SecretOrRecipient secret={this.state.secret}
+          recipient={this.state.recipient}
+          telepathChannel={this.state.telepathChannel}
           onSecret={this.onSecret}
-          onRecipient={this.onRecipient} />
+          onRecipient={this.onRecipient}
+          onDone={this.onDone} />
       </PageCentered>
     )
   }

@@ -18,13 +18,14 @@ class Connector extends React.Component {
     this.setState({ telepathChannel })
   }
 
-  onOpen = dispatch => {
+  onOpen = () => {
     this.setState({ open: true })
   }
 
-  onDone = dispatch => {
+  onDone = () => {
     this.setState({ open: false })
     console.log('ready to get your identity from ios app')
+    this.props.onDone && this.props.onDone(this.state.telepathChannel)
     // dispatch(AccountActions.get(this.props.telepathChannel))
   }
 
