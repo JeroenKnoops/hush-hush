@@ -18,7 +18,10 @@ function setupPresets (babelEnv) {
   return [
     [
       'next/babel', {
-        'preset-env': { modules: false }
+        'preset-env': {
+          modules: false,
+          targets: '> 0.25%, not dead'
+        }
       }
     ],
     [

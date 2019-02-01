@@ -1,11 +1,13 @@
 import React, { Component } from 'react'
+import { Button } from 'semantic-ui-react'
 
 import { FadingValueBox } from '../animations'
-import { Form, Button, Textarea, Label } from '../forms'
+import { Form, Textarea, Label } from '../forms'
 
 class Secret extends Component {
   state = {
-    secret: ''
+    secret: '',
+    disabled: true
   }
 
   constructor () {
@@ -14,7 +16,11 @@ class Secret extends Component {
   }
 
   onChange = event => {
-    this.setState({ secret: event.target.value })
+    const secret = event.target.value
+    this.setState({
+      secret,
+      disabled: secret === ''
+    })
   }
 
   onSubmit = event => {
@@ -22,6 +28,10 @@ class Secret extends Component {
     this.setState({ secret: '' })
     this.secretField.current.focus()
     event.preventDefault()
+  }
+
+  submitDisabled = () => {
+    return this.state.secret === ''
   }
 
   componentDidMount () {
@@ -37,7 +47,14 @@ class Secret extends Component {
             value={this.state.secret}
             placeholder='Type your secret here...'
             onChange={this.onChange} />
-          <Button type='submit' value='Send...' />
+          <div css={{ alignSelf: 'center', marginTop: '1rem' }}>
+            <Button primary
+              disabled={this.state.disabled}
+              onClick={this.onSubmit}>
+              Send...
+            </Button>
+          </div>
+
         </Form>
       </FadingValueBox>
     )

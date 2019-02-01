@@ -1,10 +1,10 @@
 import styled from '@emotion/styled'
 
-const Button = styled.input({
+const Button = styled.input(props => ({
   fontFamily: '"Roboto Mono", monospace',
   fontSize: '1.2em',
   backgroundColor: '#0099FF',
-  color: 'white',
+  color: props.disabled ? 'grey' : 'white',
   alignSelf: 'center',
   marginTop: '20px',
   borderRadius: '10px',
@@ -19,11 +19,15 @@ const Button = styled.input({
     opacity: '0.6'
   },
   ':hover': {
-    filter: 'brightness(85%)'
+    filter: props.disabled ? 'none' : 'brightness(85%)'
   },
   ':focus': {
     opacity: '0.8'
+  },
+  ':disabled': {
+    backgroundColor: 'black',
+    border: '1px solid grey'
   }
-})
+}))
 
 export { Button }
