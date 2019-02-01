@@ -8,8 +8,8 @@ describe('index', () => {
     expect(container).toMatchSnapshot()
   })
 
-  it('displays welcome text', () => {
+  it('displays secret form', () => {
     const { getByText } = render(<Home />)
-    expect(getByText(/welcome to next.js/i)).toBeInTheDocument()
+    expect(getByText(/your secret/i)).toBeInTheDocument()
   })
 })
