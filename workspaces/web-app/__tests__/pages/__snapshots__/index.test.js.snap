@@ -49,7 +49,6 @@ exports[`index has proper styling 1`] = `
 .emotion-2 {
   font-family: "Roboto Mono",monospace;
   width: 500px;
-  height: 300px;
   background-color: black;
   color: white;
   border-radius: 20px;
@@ -91,35 +90,32 @@ exports[`index has proper styling 1`] = `
     class="emotion-8 emotion-9"
   >
     <div
-      class="emotion-6 emotion-7"
-      opacity="1"
+      css="[object Object]"
     >
-      <form
-        class="emotion-4 emotion-5"
+      <div
+        class="emotion-6 emotion-7"
+        opacity="1"
       >
-        <label
-          class="emotion-0 emotion-1"
-          for="secret"
+        <form
+          class="emotion-4 emotion-5"
         >
-          Your secret
-        </label>
-        <textarea
-          class="emotion-2 emotion-3"
-          id="secret"
-          placeholder="Type your secret here..."
-        />
-        <div
-          css="[object Object]"
-        >
-          <button
-            class="ui primary disabled button"
-            disabled=""
-            tabindex="-1"
+          <label
+            class="emotion-0 emotion-1"
+            for="frmEmailA"
           >
-            Send...
-          </button>
-        </div>
-      </form>
+            Recipient:
+          </label>
+          <input
+            class="emotion-2 emotion-3"
+            id="frmEmailA"
+            name="email"
+            placeholder="name@example.com"
+            required=""
+            type="email"
+            value=""
+          />
+        </form>
+      </div>
     </div>
   </div>
 </div>

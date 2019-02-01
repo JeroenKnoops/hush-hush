@@ -18,6 +18,6 @@ describe('index', () => {
     const { getByText } = render(<Home />)
     // for the fading animation to finish
     jest.runAllTimers()
-    expect(getByText(/your secret/i)).toBeInTheDocument()
+    expect(getByText(/recipient/i)).toBeInTheDocument()
   })
 })

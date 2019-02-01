@@ -9,7 +9,9 @@ const emailValidationRegEx = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*
 
 class Recipient extends Component {
   state = {
-    recipient: ''
+    recipient: '',
+    known: false,
+    unknown: false
   }
 
   constructor () {
@@ -18,20 +20,39 @@ class Recipient extends Component {
   }
 
   onChange = event => {
-    this.setState({ recipient: event.target.value })
+    const recipient = event.target.value
+    this.setState({ recipient })
+    if (this.validRecipient(recipient)) {
+      if (localStorage.getItem(recipient)) {
+        this.setState({ known: true, unknown: false })
+      } else {
+        this.setState({ unknown: true, known: false })
+      }
+    } else {
+      this.setState({ unknown: false, known: false })
+    }
   }
 
   onSubmit = event => {
     event.preventDefault()
   }
 
-  onDone = telepathChannel => {
-    this.props.onSubmit && this.props.onSubmit(this.state.recipient, telepathChannel)
+  onInvite = () => {
+
   }
 
-  validRecipient = () => {
-    return this.state.recipient.length > 0 &&
-      this.state.recipient.match(emailValidationRegEx)
+  onDone = (telepathChannel, invite) => {
+    this.props.onSubmit && this.props.onSubmit(this.state.recipient, telepathChannel, invite)
+  }
+
+  // validRecipient = () => {
+  //   return this.state.recipient.length > 0 &&
+  //     this.state.recipient.match(emailValidationRegEx)
+  // }
+
+  validRecipient = recipient => {
+    return recipient.length > 0 &&
+      recipient.match(emailValidationRegEx)
   }
 
   submitDisabled = () => {
@@ -44,20 +65,23 @@ class Recipient extends Component {
 
   render () {
     return (
-      <FadingValueBox>
-        <Form onSubmit={this.onSubmit}>
-          <Label htmlFor='frmEmailA'>Recipient:</Label>
-          <Input id='frmEmailA' type='email'
-            name='email'
-            ref={this.recipientField}
-            value={this.state.recipient}
-            placeholder='name@example.com'
-            required
-            autocomplete='email'
-            onChange={this.onChange} />
-          <Connector disabled={this.submitDisabled()} onDone={this.onDone} />
-        </Form>
-      </FadingValueBox>
+      <div css={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-start', minHeight: '150px' }}>
+        <FadingValueBox>
+          <Form onSubmit={this.onSubmit}>
+            <Label htmlFor='frmEmailA'>Recipient:</Label>
+            <Input id='frmEmailA' type='email'
+              name='email'
+              ref={this.recipientField}
+              value={this.state.recipient}
+              placeholder='name@example.com'
+              required
+              autocomplete='email'
+              onChange={this.onChange} />
+            { this.state.known && <Connector onDone={this.onDone} /> }
+            { this.state.unknown && <Connector onDone={this.onDone} invite /> }
+          </Form>
+        </FadingValueBox>
+      </div>
     )
   }
 }

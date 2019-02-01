@@ -6,20 +6,41 @@ import { Secret } from './Secret'
 import { Recipient } from './Recipient'
 import { Encrypting } from './Encrypting'
 
-const SecretOrRecipient = ({ secret, recipient, telepathChannel, onSecret, onRecipient, onDone }) => {
-  if (secret === '') {
-    return (
-      <Secret onSubmit={onSecret} />
-    )
-  } else if (recipient === '') {
+// const SecretOrRecipient = ({ secret, recipient, telepathChannel, invite, onSecret, onRecipient, onDone }) => {
+//   if (secret === '') {
+//     return (
+//       <Secret onSubmit={onSecret} />
+//     )
+//   } else if (recipient === '') {
+//     return (
+//       <Recipient onSubmit={onRecipient} />
+//     )
+//   } else {
+//     return (
+//       <Encrypting secret={secret}
+//         recipient={recipient}
+//         telepathChannel={telepathChannel}
+//         invite={invite}
+//         onDone={onDone} />
+//     )
+//   }
+// }
+
+const SecretOrRecipient = ({ secret, recipient, telepathChannel, invite, onSecret, onRecipient, onDone }) => {
+  if (recipient === '') {
     return (
       <Recipient onSubmit={onRecipient} />
+    )
+  } else if (!invite && secret === '') {
+    return (
+      <Secret onSubmit={onSecret} />
     )
   } else {
     return (
       <Encrypting secret={secret}
         recipient={recipient}
         telepathChannel={telepathChannel}
+        invite={invite}
         onDone={onDone} />
     )
   }
@@ -41,9 +62,9 @@ class Sender extends React.Component {
     this.setState({ secret })
   }
 
-  onRecipient = (recipient, telepathChannel) => {
+  onRecipient = (recipient, telepathChannel, invite) => {
     console.log('got your recipient:', recipient)
-    this.setState({ recipient, telepathChannel })
+    this.setState({ recipient, telepathChannel, invite })
   }
 
   onDone = () => {
@@ -60,6 +81,7 @@ class Sender extends React.Component {
         <SecretOrRecipient secret={this.state.secret}
           recipient={this.state.recipient}
           telepathChannel={this.state.telepathChannel}
+          invite={this.state.invite}
           onSecret={this.onSecret}
           onRecipient={this.onRecipient}
           onDone={this.onDone} />
