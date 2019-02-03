@@ -7,7 +7,8 @@ const FadingValueWrapper = styled.div(props => {
     display: 'flex',
     flexFlow: 'column nowrap',
     alignItems: 'flex-start',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    width: '100%'
   }
   if (props.opacity === 0) {
     return {

@@ -37,18 +37,9 @@ class Recipient extends Component {
     event.preventDefault()
   }
 
-  onInvite = () => {
-
-  }
-
   onDone = (telepathChannel, invite) => {
     this.props.onSubmit && this.props.onSubmit(this.state.recipient, telepathChannel, invite)
   }
-
-  // validRecipient = () => {
-  //   return this.state.recipient.length > 0 &&
-  //     this.state.recipient.match(emailValidationRegEx)
-  // }
 
   validRecipient = recipient => {
     return recipient.length > 0 &&
@@ -65,7 +56,7 @@ class Recipient extends Component {
 
   render () {
     return (
-      <div css={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-start', minHeight: '150px' }}>
+      <div css={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-start', minHeight: '150px', maxWidth: '550px', width: '85%' }}>
         <FadingValueBox>
           <Form onSubmit={this.onSubmit}>
             <Label htmlFor='frmEmailA'>Recipient:</Label>

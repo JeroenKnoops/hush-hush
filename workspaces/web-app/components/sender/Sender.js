@@ -6,34 +6,21 @@ import { Secret } from './Secret'
 import { Recipient } from './Recipient'
 import { Encrypting } from './Encrypting'
 
-// const SecretOrRecipient = ({ secret, recipient, telepathChannel, invite, onSecret, onRecipient, onDone }) => {
-//   if (secret === '') {
-//     return (
-//       <Secret onSubmit={onSecret} />
-//     )
-//   } else if (recipient === '') {
-//     return (
-//       <Recipient onSubmit={onRecipient} />
-//     )
-//   } else {
-//     return (
-//       <Encrypting secret={secret}
-//         recipient={recipient}
-//         telepathChannel={telepathChannel}
-//         invite={invite}
-//         onDone={onDone} />
-//     )
-//   }
-// }
-
-const SecretOrRecipient = ({ secret, recipient, telepathChannel, invite, onSecret, onRecipient, onDone }) => {
+const SecretOrRecipient = ({
+  secret,
+  recipient,
+  telepathChannel,
+  invite,
+  onSecretReady,
+  onRecipientReady,
+  onDone }) => {
   if (recipient === '') {
     return (
-      <Recipient onSubmit={onRecipient} />
+      <Recipient onSubmit={onRecipientReady} />
     )
   } else if (!invite && secret === '') {
     return (
-      <Secret onSubmit={onSecret} />
+      <Secret onSubmit={onSecretReady} />
     )
   } else {
     return (
@@ -57,12 +44,12 @@ class Sender extends React.Component {
     this.state = this.initialState
   }
 
-  onSecret = secret => {
+  onSecretReady = secret => {
     console.log('got your secret:', secret)
     this.setState({ secret })
   }
 
-  onRecipient = (recipient, telepathChannel, invite) => {
+  onRecipientReady = (recipient, telepathChannel, invite) => {
     console.log('got your recipient:', recipient)
     this.setState({ recipient, telepathChannel, invite })
   }
@@ -76,14 +63,12 @@ class Sender extends React.Component {
       <PageCentered css={{ color: 'white' }}>
         <Head>
           <title>Hush Hush</title>
+          <meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no' />
           <link href='https://fonts.googleapis.com/css?family=Roboto+Mono' rel='stylesheet' />
         </Head>
-        <SecretOrRecipient secret={this.state.secret}
-          recipient={this.state.recipient}
-          telepathChannel={this.state.telepathChannel}
-          invite={this.state.invite}
-          onSecret={this.onSecret}
-          onRecipient={this.onRecipient}
+        <SecretOrRecipient {...this.state}
+          onSecretReady={this.onSecretReady}
+          onRecipientReady={this.onRecipientReady}
           onDone={this.onDone} />
       </PageCentered>
     )

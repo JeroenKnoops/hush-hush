@@ -2,7 +2,7 @@ import styled from '@emotion/styled'
 
 const Textarea = styled.textarea({
   fontFamily: '"Roboto Mono", monospace',
-  width: '500px',
+  width: '100%',
   height: '300px',
   backgroundColor: 'black',
   color: 'white',
@@ -14,6 +14,9 @@ const Textarea = styled.textarea({
   transition: 'border-color 0.2s ease-in-out 0s',
   ':focus': {
     borderColor: '#0099FF'
+  },
+  '::selection': {
+    backgroundColor: 'white'
   }
 })
 

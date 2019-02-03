@@ -2,7 +2,8 @@ import styled from '@emotion/styled'
 
 const Input = styled.input({
   fontFamily: '"Roboto Mono", monospace',
-  width: '500px',
+  width: '100%',
+  maxWidth: '500px',
   backgroundColor: 'black',
   color: 'white',
   borderRadius: '20px',
@@ -13,6 +14,9 @@ const Input = styled.input({
   transition: 'border-color 0.2s ease-in-out 0s',
   ':focus': {
     borderColor: '#0099FF'
+  },
+  '::selection': {
+    backgroundColor: 'white'
   }
 })
 
