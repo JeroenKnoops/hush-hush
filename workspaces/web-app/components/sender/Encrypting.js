@@ -81,14 +81,14 @@ class Encrypting extends React.Component {
 
   render () {
     return (
-      <FadingValueBox trigger={this.state.status}>
-        {!this.state.done && <div>
+      <FadingValueBox css={{ alignItems: 'center' }} trigger={this.state.status}>
+        {!this.state.done && <div css={{ width: '100%', textAlign: 'center', wordBreak: 'break-word' }}>
           {this.state.status}
         </div>}
         { this.state.done &&
-          <div css={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'center' }}>
-            <Textarea id='invitation' css={{ width: '400px', height: '200px' }} readOnly value={this.state.status} />
-            <div css={{ marginTop: '1rem' }}>
+          <div css={{ display: 'flex', width: '100%', flexFlow: 'column nowrap', alignItems: 'center' }}>
+            <Textarea id='invitation' css={{ height: '200px' }} readOnly value={this.state.status} />
+            <div css={{ display: 'flex', justifyContent: 'center', marginTop: '1rem', width: '100%' }}>
               <Button primary onClick={this.onCopy}>{this.state.copied ? 'Copied' : 'Copy to clipboard...'}</Button>
             </div>
           </div>

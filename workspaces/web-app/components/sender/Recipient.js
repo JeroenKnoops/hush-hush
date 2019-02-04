@@ -56,23 +56,21 @@ class Recipient extends Component {
 
   render () {
     return (
-      <div css={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-start', minHeight: '150px', maxWidth: '550px', width: '85%' }}>
-        <FadingValueBox>
-          <Form onSubmit={this.onSubmit}>
-            <Label htmlFor='frmEmailA'>Recipient:</Label>
-            <Input id='frmEmailA' type='email'
-              name='email'
-              ref={this.recipientField}
-              value={this.state.recipient}
-              placeholder='name@example.com'
-              required
-              autocomplete='email'
-              onChange={this.onChange} />
-            { this.state.known && <Connector onDone={this.onDone} /> }
-            { this.state.unknown && <Connector onDone={this.onDone} invite /> }
-          </Form>
-        </FadingValueBox>
-      </div>
+      <FadingValueBox css={{ alignItems: 'center' }}>
+        <Form onSubmit={this.onSubmit}>
+          <Label htmlFor='frmEmailA'>Recipient:</Label>
+          <Input id='frmEmailA' type='email'
+            name='email'
+            ref={this.recipientField}
+            value={this.state.recipient}
+            placeholder='name@example.com'
+            required
+            autocomplete='email'
+            onChange={this.onChange} />
+          { this.state.known && <Connector onDone={this.onDone} /> }
+          { this.state.unknown && <Connector onDone={this.onDone} invite /> }
+        </Form>
+      </FadingValueBox>
     )
   }
 }
