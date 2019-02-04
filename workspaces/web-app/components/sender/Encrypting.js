@@ -55,10 +55,11 @@ class Encrypting extends React.Component {
     }, 1000)
   }
 
-  onCopy = () => {
-    const copyText = document.querySelector('#invitation')
-    copyText.select()
-    document.execCommand('copy')
+  isOS = () => {
+    return navigator.userAgent.match(/ipad|iphone/i)
+  }
+
+  clearSelection = () => {
     if (window.getSelection) {
       if (window.getSelection().empty) { // Chrome
         window.getSelection().empty()
@@ -68,6 +69,28 @@ class Encrypting extends React.Component {
     } else if (document.selection) { // IE?
       document.selection.empty()
     }
+  }
+
+  selectText = textarea => {
+    let range
+    let selection
+    if (this.isOS()) {
+      range = document.createRange()
+      range.selectNodeContents(textarea)
+      selection = window.getSelection()
+      selection.removeAllRanges()
+      selection.addRange(range)
+      textarea.setSelectionRange(0, 999999)
+    } else {
+      textarea.select()
+    }
+  }
+
+  onCopy = () => {
+    const textarea = document.querySelector('#invitation')
+    this.selectText(textarea)
+    document.execCommand('copy')
+    this.clearSelection()
     this.setState({ copied: true })
   }
 
