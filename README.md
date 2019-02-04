@@ -7,7 +7,7 @@ A simple secret sharing app based on Cogito Identity framework.
 ```bash
 $ yarn
 $ yarn test # optionally with --no-cache
-$ cd workspaces && yarn dev
+$ cd workspaces/web-app && yarn dev
 ```
 
 ## Deploying to zeit
