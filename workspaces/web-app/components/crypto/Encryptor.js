@@ -11,18 +11,6 @@ const createRandomKey = async () => {
   return random(await keySize())
 }
 
-const copyToClipboard = str => {
-  const el = document.createElement('textarea')
-  el.value = str
-  // el.setAttribute('readonly', '')
-  // el.style.position = 'absolute'
-  // el.style.left = '-9999px'
-  document.body.appendChild(el)
-  el.select()
-  document.execCommand('copy')
-  // document.body.removeChild(el)
-}
-
 class Encryptor {
   static encrypt = async ({ telepathChannel, plainText, recipient }) => {
     const cogitoEncryption = new CogitoEncryption({ telepathChannel })
@@ -59,7 +47,6 @@ class Encryptor {
     }
     const serializedState = JSON.stringify(exchangeObject)
     localStorage.setItem(recipient, serializedState)
-    copyToClipboard(base64url.encode(symmetricKeyText))
     return base64url.encode(symmetricKeyText)
   }
 }
