@@ -1,4 +1,5 @@
 const withCSS = require('@zeit/next-css')
+const webpack = require('webpack')
 
 module.exports = withCSS({
   target: 'serverless',
@@ -16,6 +17,14 @@ module.exports = withCSS({
         }
       }
     })
+    config.plugins.push(
+      /**
+       * IgnorePlugin will skip any require
+       * that matches the following regex.
+       */
+      new webpack.IgnorePlugin(/^encoding$/, /node-fetch/)
+    )
+
     return config
   }
 })
