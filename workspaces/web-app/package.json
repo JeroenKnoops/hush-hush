@@ -31,9 +31,6 @@
     "now-build": "next build",
     "start": "next start"
   },
-  "resolutions": {
-    "terser": "3.14.1"
-  },
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@emotion/babel-preset-css-prop": "^10.0.6",
