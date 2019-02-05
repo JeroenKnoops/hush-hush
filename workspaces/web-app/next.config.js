@@ -27,21 +27,6 @@ module.exports = withCSS({
        */
       new webpack.IgnorePlugin(/^encoding$/, /node-fetch/)
     )
-    // config.plugins.push(
-    //   /**
-    //    * IgnorePlugin will skip any require
-    //    * that matches the following regex.
-    //    */
-    //   new webpack.IgnorePlugin(/^memcpy$/)
-    // )
-    // config.plugins.push(
-    //   /**
-    //    * IgnorePlugin will skip any require
-    //    * that matches the following regex.
-    //    */
-    //   new webpack.IgnorePlugin(/grpc/)
-    // )
-
     return config
   }
 })

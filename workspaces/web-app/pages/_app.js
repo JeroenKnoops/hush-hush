@@ -14,11 +14,13 @@ export default class MyApp extends App {
       pageProps = await Component.getInitialProps(ctx)
     }
 
+    pageProps = { ...pageProps, firebasePwd: process.env.FIREBASE_PWD }
+
     return { pageProps }
   }
 
   async componentDidMount () {
-    await startFirebase()
+    await startFirebase(this.props.pageProps.firebasePwd)
   }
 
   render () {

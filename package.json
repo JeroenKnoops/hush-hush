@@ -37,6 +37,9 @@
       "**/lib/**",
       "**/es/**"
     ],
+    "globals": [
+      "firebase"
+    ],
     "envs": [
       "es6",
       "browser",
