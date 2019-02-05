@@ -1,6 +1,6 @@
-import firebase from 'firebase/app'
-import 'firebase/database'
-import 'firebase/auth'
+// import firebase from 'firebase/app'
+// import 'firebase/database'
+// import 'firebase/auth'
 import { CogitoEncryption, CogitoKeyProvider } from '@cogitojs/cogito-encryption'
 import base64url from 'base64url'
 import {
@@ -25,32 +25,42 @@ const getCurrentlySignedUser = () => {
   }
 }
 
-const store = async (tag, obj) => {
-  const uid = getCurrentlySignedUser()
-  if (uid) {
-    console.log('uid=', uid)
-    const usersRef = firebase.database().ref(`users/${uid}/${tag}`)
-    usersRef.set(obj)
-  }
-}
+// const store = async (tag, obj) => {
+//   const uid = getCurrentlySignedUser()
+//   if (uid) {
+//     console.log('uid=', uid)
+//     const usersRef = firebase.database().ref(`users/${uid}/${tag}`)
+//     usersRef.set(obj)
+//   }
+// }
+
+// const read = async () => {
+//   const uid = getCurrentlySignedUser()
+//   if (uid) {
+//     const snap = await firebase.database().ref('/users/' + uid).once('value')
+//     console.log('snap=', snap.val())
+//   }
+// }
 
 const read = async () => {
   const uid = getCurrentlySignedUser()
   if (uid) {
-    const snap = await firebase.database().ref('/users/' + uid).once('value')
-    console.log('snap=', snap.val())
+    const db = firebase.firestore()
+    const doc = await db.collection('users').doc(uid).get()
+    console.log('doc=', doc.data())
   }
 }
-// const store = async (obj) => {
-//   const db = firebase.firestore()
-//   const uid = getCurrentlySignedUser()
-//   if (uid) {
-//     console.log('uid=', uid)
-//     const doc = await db.collection('users').doc(uid).get()
-//     console.log('doc=', doc.data())
-//     db.collection('users').doc(uid).set(obj, { merge: true })
-//   }
-// }
+
+const store = async (obj) => {
+  const uid = getCurrentlySignedUser()
+  if (uid) {
+    console.log('uid=', uid)
+    const db = firebase.firestore()
+    const doc = await db.collection('users').doc(uid).get()
+    console.log('doc=', doc.data())
+    db.collection('users').doc(uid).set(obj, { merge: true })
+  }
+}
 
 class Encryptor {
   static encrypt = async ({ telepathChannel, plainText, recipient }) => {
@@ -92,19 +102,20 @@ class Encryptor {
           key: base64url.encode(recipient),
           value: tag
         })
-        await store(tag, {
-          sender: {
-            epub: base64url.encode(encryptedSenderPublicKey)
+        // await store(tag, {
+        //   sender: {
+        //     epub: base64url.encode(encryptedSenderPublicKey)
+        //   }
+        // })
+        // await read()
+        await store({
+          [`${tag}`]: {
+            sender: {
+              epub: base64url.encode(encryptedSenderPublicKey)
+            }
           }
         })
         await read()
-        // await store({
-        //   [`${tag}`]: {
-        //     sender: {
-        //       epub: base64url.encode(encryptedSenderPublicKey)
-        //     }
-        //   }
-        // })
       }
     } catch (e) {
       console.error(e)

@@ -1,7 +1,7 @@
 import getConfig from 'next/config'
-import firebase from 'firebase/app'
+// import firebase from 'firebase/app'
 // import 'firebase/firestore'
-import 'firebase/auth'
+// import 'firebase/auth'
 
 // We use different firebase when developing locally and
 // a different one in production
