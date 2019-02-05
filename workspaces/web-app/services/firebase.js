@@ -1,6 +1,6 @@
 import getConfig from 'next/config'
 import firebase from 'firebase/app'
-import 'firebase/firestore'
+// import 'firebase/firestore'
 import 'firebase/auth'
 
 // We use different firebase when developing locally and
@@ -55,7 +55,7 @@ async function startFirebase () {
     // }
   } catch (e) {
     if (!/already exists/.test(e.message)) {
-      console.error('Firebase initialization error', e.stack)
+      console.error('Firebase initialization error:', e.stack)
     }
   }
 }
