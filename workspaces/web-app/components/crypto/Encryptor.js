@@ -1,3 +1,6 @@
+import firebase from 'firebase/app'
+import 'firebase/firestore'
+import 'firebase/auth'
 import { CogitoEncryption, CogitoKeyProvider } from '@cogitojs/cogito-encryption'
 import base64url from 'base64url'
 import {
@@ -7,8 +10,30 @@ import {
   encrypt
 } from '@cogitojs/crypto'
 
+import { CogitoGarbageBin } from '../cogito-garbage-bin'
+
 const createRandomKey = async () => {
   return random(await keySize())
+}
+
+const getCurrentlySignedUser = () => {
+  const user = firebase.auth().currentUser
+  if (user) {
+    return user.uid
+  } else {
+    return null
+  }
+}
+
+const store = async (obj) => {
+  const db = firebase.firestore()
+  const uid = getCurrentlySignedUser()
+  if (uid) {
+    console.log('uid=', uid)
+    const doc = await db.collection('users').doc(uid).get()
+    console.log('doc=', doc.data())
+    db.collection('users').doc(uid).set(obj, { merge: true })
+  }
 }
 
 class Encryptor {
@@ -38,6 +63,30 @@ class Encryptor {
     const nonce = await random(await nonceSize())
     const encryptedSenderPublicKey = await encrypt(JSON.stringify(jsonWebKey), nonce, symmetricKey)
     const encryptedSymmetricKey = await cogitoEncryption.encrypt({ jsonWebKey, plainText: symmetricKeyText })
+
+    const garbageBin = new CogitoGarbageBin({ telepathChannel })
+    try {
+      const uid = getCurrentlySignedUser()
+      if (uid) {
+        await garbageBin.store({
+          key: tag,
+          value: base64url.encode(symmetricKeyText)
+        })
+        await garbageBin.store({
+          key: base64url.encode(recipient),
+          value: tag
+        })
+        await store({
+          [`${tag}`]: {
+            sender: {
+              epub: base64url.encode(encryptedSenderPublicKey)
+            }
+          }
+        })
+      }
+    } catch (e) {
+      console.error(e)
+    }
 
     const exchangeObject = {
       senderTag: tag,

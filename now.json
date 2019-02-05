@@ -1,6 +1,9 @@
 {
   "version": 2,
   "name": "hush-hush",
+  "env": {
+    "FIREBASE_PWD": "@hush-hush-firebase"
+  },
   "builds": [{ "src": "workspaces/web-app/package.json", "use": "@now/next" }],
   "routes": [
     { "src": "/(.*)", "dest": "/workspaces/web-app/$1" }

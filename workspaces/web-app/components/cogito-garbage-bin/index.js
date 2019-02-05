@@ -1,0 +1,1 @@
+export { CogitoGarbageBin } from './CogitoGarbageBin'

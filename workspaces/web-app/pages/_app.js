@@ -4,6 +4,8 @@ import { Global } from '@emotion/core'
 import App, { Container } from 'next/app'
 import 'semantic-ui-css/semantic.min.css'
 
+import { startFirebase } from '../services/firebase'
+
 export default class MyApp extends App {
   static async getInitialProps ({ Component, router, ctx }) {
     let pageProps = {}
@@ -13,6 +15,10 @@ export default class MyApp extends App {
     }
 
     return { pageProps }
+  }
+
+  async componentDidMount () {
+    await startFirebase()
   }
 
   render () {

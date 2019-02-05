@@ -3,6 +3,9 @@ const webpack = require('webpack')
 
 module.exports = withCSS({
   target: 'serverless',
+  publicRuntimeConfig: {
+    firebasePwd: process.env.FIREBASE_PWD
+  },
   webpack (config) {
     config.module.rules.push({
       test: /\.(png|svg|eot|otf|ttf|woff|woff2)$/,
