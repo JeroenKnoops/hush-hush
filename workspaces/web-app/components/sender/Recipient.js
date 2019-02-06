@@ -46,7 +46,7 @@ class Recipient extends Component {
 
   render () {
     return (
-      <FadingValueBox css={{ alignItems: 'center' }}>
+      <FadingValueBox>
         <Form onSubmit={this.onSubmit}>
           <Label htmlFor='frmEmailA'>Recipient:</Label>
           <Input id='frmEmailA' type='email'
@@ -56,7 +56,8 @@ class Recipient extends Component {
             placeholder='name@example.com'
             required
             autocomplete='email'
-            onChange={this.onChange} />
+            onChange={this.onChange}
+            css={{ marginBottom: '1rem' }} />
           { this.state.validRecipient && <Connector onDone={this.onDone}
             title="Let's hush..."
             disabled={this.state.disabled} /> }

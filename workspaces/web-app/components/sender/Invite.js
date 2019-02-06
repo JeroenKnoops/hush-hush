@@ -16,7 +16,7 @@ class Invite extends React.Component {
 
   render () {
     return (
-      <FadingValueBox css={{ alignItems: 'center' }}>
+      <FadingValueBox>
         <div css={{ width: '100%', textAlign: 'center', wordBreak: 'break-word' }}>
           Looks like you never, ever hushed anything with <FormatBlue>{`${this.props.recipient}`}</FormatBlue>
         </div>

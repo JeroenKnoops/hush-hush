@@ -64,11 +64,17 @@ class Encryptor {
     const tag = await cogitoKeyProvider.createNewKeyPair()
     const jsonWebKey = await cogitoKeyProvider.getPublicKey({ tag })
 
+    console.log('jsonWebKey=', jsonWebKey)
+
     const symmetricKey = await createRandomKey()
-    const symmetricKeyText = symmetricKey.toString('hex')
+    console.log('symmetricKey=', symmetricKey.toString('hex'))
+    console.log('symmetricKey=', base64url.toBuffer(base64url.encode(symmetricKey)).toString('hex'))
+    // const symmetricKeyText = symmetricKey.toString('hex')
     const nonce = await random(await nonceSize())
+    console.log('nonce=', nonce.toString('hex'))
+    console.log('nonce=', base64url.toBuffer(base64url.encode(nonce)).toString('hex'))
     const encryptedSenderPublicKey = await encrypt(JSON.stringify(jsonWebKey), nonce, symmetricKey)
-    const encryptedSymmetricKey = await cogitoEncryption.encrypt({ jsonWebKey, plainText: symmetricKeyText })
+    const encryptedSymmetricKey = await cogitoEncryption.encrypt({ jsonWebKey, plainText: base64url.encode(symmetricKey) })
 
     const garbageBin = new CogitoGarbageBin({ telepathChannel })
     try {
@@ -76,7 +82,7 @@ class Encryptor {
       if (uid) {
         await garbageBin.store({
           key: tag,
-          value: base64url.encode(symmetricKeyText)
+          value: base64url.encode(symmetricKey)
         })
         await garbageBin.store({
           key: base64url.encode(recipient),
@@ -103,7 +109,7 @@ class Encryptor {
     }
     const serializedState = JSON.stringify(exchangeObject)
     localStorage.setItem(recipient, serializedState)
-    return base64url.encode(symmetricKeyText) + '.' + base64url.encode(nonce)
+    return `https://hush-hush.now.sh/invite#${base64url.encode(tag)}.${base64url.encode(symmetricKey)}.${base64url.encode(nonce)}`
   }
 }
 

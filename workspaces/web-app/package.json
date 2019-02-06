@@ -15,6 +15,7 @@
     "@cogitojs/telepath-js": "^0.2.23",
     "@emotion/core": "^10.0.1",
     "@emotion/styled": "^10.0.1",
+    "@react-frontend-developer/buffers": "^1.0.17",
     "@react-frontend-developer/react-layout-helpers": "^1.0.17",
     "babel-polyfill": "^6.26.0",
     "next": "^8.0.0-canary.18",

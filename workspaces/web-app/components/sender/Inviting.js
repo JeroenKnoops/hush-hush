@@ -100,14 +100,14 @@ class Inviting extends React.Component {
 
   render () {
     return (
-      <FadingValueBox css={{ alignItems: 'center' }} trigger={this.state.status}>
+      <FadingValueBox trigger={this.state.status}>
         {!this.state.done && <div css={{ width: '100%', textAlign: 'center', wordBreak: 'break-word' }}>
           {this.state.status}
         </div>}
         { this.state.done &&
           <div css={{ display: 'flex', width: '100%', flexFlow: 'column nowrap', alignItems: 'center' }}>
             <div css={{ width: '100%', textAlign: 'center' }}>
-              This is the invitation you need to send to <FormatBlue>{this.props.recipient}</FormatBlue>.
+              This is the invitation link you need to send to <FormatBlue>{this.props.recipient}</FormatBlue>.
             </div>
             <div css={{ width: '100%', textAlign: 'center', marginBottom: '50px' }}>
               Copy it, paste to your favorite email client and wait for your hush buddy to accept.

@@ -25,7 +25,7 @@ class Connector extends React.Component {
   onDone = () => {
     this.setState({ open: false })
     console.log('ready to get your identity from ios app')
-    this.props.onDone && this.props.onDone(this.state.telepathChannel, this.props.invite)
+    this.props.onDone && this.props.onDone(this.state.telepathChannel)
     // dispatch(AccountActions.get(this.props.telepathChannel))
   }
 
@@ -40,7 +40,7 @@ class Connector extends React.Component {
   render () {
     if (!this.state.telepathChannel) return null
     return (
-      <div css={{ alignSelf: 'center', marginTop: '1rem' }}>
+      <div css={{ alignSelf: 'center' }}>
         <CogitoConnector open={this.state.open}
           buttonText={this.props.title}
           buttonDisabled={this.props.disabled}

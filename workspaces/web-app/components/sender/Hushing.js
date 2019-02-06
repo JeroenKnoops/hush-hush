@@ -104,7 +104,7 @@ class Hushing extends React.Component {
 
   render () {
     return (
-      <FadingValueBox css={{ alignItems: 'center' }} trigger={this.state.status}>
+      <FadingValueBox trigger={this.state.status}>
         {!this.state.done && <div css={{ width: '100%', textAlign: 'center', wordBreak: 'break-word' }}>
           {this.state.status}
         </div>}
