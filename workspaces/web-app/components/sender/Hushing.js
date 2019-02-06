@@ -5,7 +5,7 @@ import { FadingValueBox } from '../animations'
 import { Button } from 'semantic-ui-react'
 import { Textarea } from '../forms'
 
-class Encrypting extends React.Component {
+class Hushing extends React.Component {
   state = {
     status: 'getting to know your identity...',
     done: false,
@@ -121,4 +121,4 @@ class Encrypting extends React.Component {
   }
 }
 
-export { Encrypting }
+export { Hushing }

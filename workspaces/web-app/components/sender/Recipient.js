@@ -10,8 +10,7 @@ const emailValidationRegEx = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*
 class Recipient extends Component {
   state = {
     recipient: '',
-    known: false,
-    unknown: false
+    validRecipient: false
   }
 
   constructor () {
@@ -21,15 +20,10 @@ class Recipient extends Component {
 
   onChange = event => {
     const recipient = event.target.value
-    this.setState({ recipient })
     if (this.validRecipient(recipient)) {
-      if (localStorage.getItem(recipient)) {
-        this.setState({ known: true, unknown: false })
-      } else {
-        this.setState({ unknown: true, known: false })
-      }
+      this.setState({ recipient, validRecipient: true })
     } else {
-      this.setState({ unknown: false, known: false })
+      this.setState({ recipient, validRecipient: false })
     }
   }
 
@@ -37,17 +31,13 @@ class Recipient extends Component {
     event.preventDefault()
   }
 
-  onDone = (telepathChannel, invite) => {
-    this.props.onSubmit && this.props.onSubmit(this.state.recipient, telepathChannel, invite)
+  onDone = (telepathChannel) => {
+    this.props.onSubmit && this.props.onSubmit(this.state.recipient, telepathChannel)
   }
 
   validRecipient = recipient => {
     return recipient.length > 0 &&
       recipient.match(emailValidationRegEx)
-  }
-
-  submitDisabled = () => {
-    return !this.validRecipient()
   }
 
   componentDidMount () {
@@ -67,8 +57,9 @@ class Recipient extends Component {
             required
             autocomplete='email'
             onChange={this.onChange} />
-          { this.state.known && <Connector onDone={this.onDone} /> }
-          { this.state.unknown && <Connector onDone={this.onDone} invite /> }
+          { this.state.validRecipient && <Connector onDone={this.onDone}
+            title="Let's hush..."
+            disabled={this.state.disabled} /> }
         </Form>
       </FadingValueBox>
     )

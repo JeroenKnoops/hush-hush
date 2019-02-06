@@ -1,1 +1,1 @@
-export { Sender } from './Sender'
+export { SenderHush } from './SenderHush'

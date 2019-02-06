@@ -103,7 +103,7 @@ class Encryptor {
     }
     const serializedState = JSON.stringify(exchangeObject)
     localStorage.setItem(recipient, serializedState)
-    return base64url.encode(symmetricKeyText)
+    return base64url.encode(symmetricKeyText) + '.' + base64url.encode(nonce)
   }
 }
 

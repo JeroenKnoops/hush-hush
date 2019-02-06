@@ -3,7 +3,6 @@ import styled from '@emotion/styled'
 const Input = styled.input({
   fontFamily: '"Roboto Mono", monospace',
   width: '100%',
-  maxWidth: '500px',
   backgroundColor: 'black',
   color: 'white',
   borderRadius: '20px',

@@ -42,7 +42,7 @@ class Connector extends React.Component {
     return (
       <div css={{ alignSelf: 'center', marginTop: '1rem' }}>
         <CogitoConnector open={this.state.open}
-          buttonText={this.props.invite ? 'Invite...' : 'Go...'}
+          buttonText={this.props.title}
           buttonDisabled={this.props.disabled}
           buttonStyling={{ primary: true }}
           connectUrl={this.getConnectUrl()}

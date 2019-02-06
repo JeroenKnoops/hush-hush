@@ -50,7 +50,6 @@ exports[`index has proper styling 1`] = `
 .emotion-2 {
   font-family: "Roboto Mono",monospace;
   width: 100%;
-  max-width: 500px;
   background-color: black;
   color: white;
   border-radius: 20px;
