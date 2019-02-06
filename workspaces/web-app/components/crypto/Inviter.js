@@ -3,7 +3,6 @@ import { Buffers } from '@react-frontend-developer/buffers'
 import { CogitoEncryption, CogitoKeyProvider } from '@cogitojs/cogito-encryption'
 import { decrypt } from '@cogitojs/crypto'
 import { IdentityFetcher } from '../identity'
-import { Promise } from 'es6-promise'
 
 const getCurrentlySignedUser = () => {
   const user = firebase.auth().currentUser
