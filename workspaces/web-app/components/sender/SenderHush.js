@@ -5,6 +5,7 @@ import { Recipient } from './Recipient'
 import { Invite } from './Invite'
 import { Inviting } from './Inviting'
 import { Pending } from './Pending'
+import { RecipientKey } from './RecipientKey'
 import { Hushing } from './Hushing'
 import { CogitoGarbageBin } from '../cogito-garbage-bin'
 
@@ -43,6 +44,7 @@ const Stages = Object.freeze({
   Inviting: Symbol('invitingProgress'),
   Pending: Symbol('invitationPending'),
   Secret: Symbol('gettingSecret'),
+  RecipientKey: Symbol('checkingIfRecipientKeyIsInTheBin'),
   Hush: Symbol('hushing')
 })
 
@@ -86,7 +88,12 @@ class SenderHush extends React.Component {
 
   onSecretReady = secret => {
     console.log('got your secret:', secret)
-    this.setState({ workflow: Stages.Hush, secret })
+    this.setState({ workflow: Stages.RecipientKey, secret })
+  }
+
+  onRecipientKeyReady = recipientPublicKey => {
+    console.log('got decrypted recipient public key:', recipientPublicKey)
+    this.setState({ workflow: Stages.Hush, recipientPublicKey })
   }
 
   onInvite = () => {
@@ -143,13 +150,28 @@ class SenderHush extends React.Component {
     )
   }
 
+  renderRecipientKey = () => {
+    const {
+      telepathChannel,
+      senderTag,
+      recipientEncryptedPublicKey
+    } = this.state
+    return (
+      <RecipientKey
+        telepathChannel={telepathChannel}
+        senderTag={senderTag}
+        recipientEncryptedPublicKey={recipientEncryptedPublicKey}
+        onDone={this.onRecipientKeyReady} />
+    )
+  }
+
   renderHush = () => {
     const {
       secret,
       recipient,
       telepathChannel,
       senderTag,
-      recipientEncryptedPublicKey,
+      recipientPublicKey,
       recipientTag
     } = this.state
     return (
@@ -157,7 +179,7 @@ class SenderHush extends React.Component {
         recipient={recipient}
         telepathChannel={telepathChannel}
         senderTag={senderTag}
-        recipientEncryptedPublicKey={recipientEncryptedPublicKey}
+        recipientPublicKey={recipientPublicKey}
         recipientTag={recipientTag}
         onDone={this.onDone} />
     )
@@ -175,6 +197,8 @@ class SenderHush extends React.Component {
         return this.renderInviting()
       case Stages.Pending:
         return this.renderPending()
+      case Stages.RecipientKey:
+        return this.renderRecipientKey()
       case Stages.Hush:
         return this.renderHush()
       default:

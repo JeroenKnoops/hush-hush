@@ -49,29 +49,62 @@ const storeSecret = async ({
     await ref.update({
       [`${senderTag}.recipient.encryptedSecret`]: encryptedSecret
     })
+    console.log('wrote encrypted secret to database')
   } else {
     throw new Error('Having trouble accesing Firebase. Please try again...')
   }
 }
 
 class Encryptor {
-  static encrypt = async ({
+  static decryptRecipientPublicKey = async ({
     telepathChannel,
-    secret,
-    recipient,
     senderTag,
     recipientEncryptedPublicKey,
-    recipientTag,
     onStatusChanged = () => {}
   }) => {
     return new Promise(async (resolve, reject) => {
       try {
+        onStatusChanged('decrypting recipient public key')
         const cogitoEncryption = new CogitoEncryption({ telepathChannel })
         const recipientPublicKeyText = await cogitoEncryption.decrypt({
           tag: senderTag,
           encryptionData: recipientEncryptedPublicKey
         })
         const recipientPublicKey = JSON.parse(recipientPublicKeyText)
+        console.log('recipientPublicKey=', recipientPublicKey)
+        setTimeout(async () => {
+          onStatusChanged('[green]Success!', ' We have the key. Now writing it down to your mobile.')
+          try {
+            const garbageBin = new CogitoGarbageBin({ telepathChannel })
+            await garbageBin.store({
+              key: senderTag,
+              value: base64url.encode(JSON.stringify(recipientPublicKey))
+            })
+            resolve(recipientPublicKey)
+          } catch (e) {
+            console.error(e)
+            reject(e)
+          }
+        }, 2000)
+      } catch (e) {
+        console.error(e)
+        reject(e)
+      }
+    })
+  }
+
+  static encrypt = async ({
+    telepathChannel,
+    secret,
+    recipient,
+    senderTag,
+    recipientPublicKey,
+    recipientTag,
+    onStatusChanged = () => {}
+  }) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const cogitoEncryption = new CogitoEncryption({ telepathChannel })
         console.log('recipientPublicKey=', recipientPublicKey)
         const encryptedSecret = await cogitoEncryption.encrypt({
           jsonWebKey: recipientPublicKey,

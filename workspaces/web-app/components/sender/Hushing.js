@@ -16,7 +16,7 @@ class Hushing extends React.Component {
 
   constructor () {
     super()
-    this.invitationField = React.createRef()
+    this.secretField = React.createRef()
   }
 
   log = (...args) => {
@@ -45,7 +45,7 @@ class Hushing extends React.Component {
         secret,
         recipient,
         senderTag,
-        recipientEncryptedPublicKey,
+        recipientPublicKey,
         recipientTag
       } = this.props
       await Encryptor.encrypt({
@@ -53,14 +53,17 @@ class Hushing extends React.Component {
         secret,
         recipient,
         senderTag,
-        recipientEncryptedPublicKey,
+        recipientPublicKey,
         recipientTag,
         onStatusChanged: this.onStatusChanged
       })
+      console.log('Encryptor.encrypt finsihed!!!')
       this.setState({
         done: true,
         status: `https://hush-hush.now.sh/secret#${base64url.encode(recipientTag)}`
       })
+      this.setHeight()
+      console.log('Encryptor.encrypt:', this.state.done, this.state.status)
     } catch (e) {
       console.error(e)
       this.log('[red]Hush! ', e.message)
@@ -99,7 +102,7 @@ class Hushing extends React.Component {
   }
 
   onCopy = () => {
-    const textarea = document.querySelector('#invitation')
+    const textarea = document.querySelector('#secret-link')
     this.selectText(textarea)
     document.execCommand('copy')
     this.clearSelection()
@@ -107,7 +110,7 @@ class Hushing extends React.Component {
   }
 
   setHeight = () => {
-    const area = this.invitationField.current
+    const area = this.secretField.current
     area.style.height = `${Number.parseInt(area.scrollHeight, 10) + 10}px`
   }
 
@@ -116,15 +119,6 @@ class Hushing extends React.Component {
   }
 
   render () {
-    if (this.state.inProgress) {
-      return (
-        <FadingValueBox trigger={this.state.status}>
-          {!this.state.done && <div css={{ width: '100%', textAlign: 'center', wordBreak: 'break-word' }}>
-            {this.state.status}
-          </div>}
-        </FadingValueBox>
-      )
-    }
     if (this.state.done) {
       return (
         <FadingValueBox>
@@ -140,11 +134,20 @@ class Hushing extends React.Component {
               Only your intended hush budy will be able to decrypt the secret.
               And that's gorgeous. Isn't it?
             </div>
-            <Textarea id='secret-link' ref={this.invitationField} css={{ height: 'auto' }} onChange={this.setHeight} value={this.state.status} />
+            <Textarea id='secret-link' ref={this.secretField} css={{ height: 'auto' }} readOnly value={this.state.status} />
             <div css={{ display: 'flex', justifyContent: 'center', marginTop: '1rem', width: '100%' }}>
               <Button primary onClick={this.onCopy}>{this.state.copied ? 'Copied' : 'Copy to clipboard...'}</Button>
             </div>
           </div>
+        </FadingValueBox>
+      )
+    }
+    if (this.state.inProgress) {
+      return (
+        <FadingValueBox trigger={this.state.status}>
+          {!this.state.done && <div css={{ width: '100%', textAlign: 'center', wordBreak: 'break-word' }}>
+            {this.state.status}
+          </div>}
         </FadingValueBox>
       )
     }
