@@ -62,25 +62,33 @@ class Encryptor {
     recipientEncryptedPublicKey,
     onStatusChanged = () => {}
   }) => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
       try {
         onStatusChanged('decrypting recipient public key')
-        const cogitoEncryption = new CogitoEncryption({ telepathChannel })
-        const recipientPublicKeyText = await cogitoEncryption.decrypt({
-          tag: senderTag,
-          encryptionData: recipientEncryptedPublicKey
-        })
-        const recipientPublicKey = JSON.parse(recipientPublicKeyText)
-        console.log('recipientPublicKey=', recipientPublicKey)
         setTimeout(async () => {
-          onStatusChanged('[green]Success!', ' We have the key. Now writing it down to your mobile.')
           try {
-            const garbageBin = new CogitoGarbageBin({ telepathChannel })
-            await garbageBin.store({
-              key: senderTag,
-              value: base64url.encode(JSON.stringify(recipientPublicKey))
+            onStatusChanged('[green]check your mobile app now')
+            const cogitoEncryption = new CogitoEncryption({ telepathChannel })
+            const recipientPublicKeyText = await cogitoEncryption.decrypt({
+              tag: senderTag,
+              encryptionData: recipientEncryptedPublicKey
             })
-            resolve(recipientPublicKey)
+            const recipientPublicKey = JSON.parse(recipientPublicKeyText)
+            console.log('recipientPublicKey=', recipientPublicKey)
+            setTimeout(async () => {
+              onStatusChanged('[green]Success!', ' We have the key. Now writing it down to your mobile.')
+              try {
+                const garbageBin = new CogitoGarbageBin({ telepathChannel })
+                await garbageBin.store({
+                  key: senderTag,
+                  value: base64url.encode(JSON.stringify(recipientPublicKey))
+                })
+                resolve(recipientPublicKey)
+              } catch (e) {
+                console.error(e)
+                reject(e)
+              }
+            }, 2000)
           } catch (e) {
             console.error(e)
             reject(e)

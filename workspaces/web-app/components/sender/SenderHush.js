@@ -153,12 +153,14 @@ class SenderHush extends React.Component {
   renderRecipientKey = () => {
     const {
       telepathChannel,
+      recipient,
       senderTag,
       recipientEncryptedPublicKey
     } = this.state
     return (
       <RecipientKey
         telepathChannel={telepathChannel}
+        recipient={recipient}
         senderTag={senderTag}
         recipientEncryptedPublicKey={recipientEncryptedPublicKey}
         onDone={this.onRecipientKeyReady} />

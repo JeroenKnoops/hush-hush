@@ -80,6 +80,11 @@ class RecipientKey extends Component {
       senderTag,
       recipientEncryptedPublicKey
     } = this.props
+    this.setState({
+      status: '',
+      decryptRecipientPubKey: false,
+      inProgress: true
+    })
     const recipientPublicKey = await Encryptor.decryptRecipientPublicKey({
       telepathChannel,
       senderTag,
