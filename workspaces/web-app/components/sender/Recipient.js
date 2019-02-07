@@ -50,7 +50,7 @@ class Recipient extends Component {
   render () {
     if (this.state.transitioning) {
       return (
-        <FadingValueBox>
+        <FadingValueBox trigger={this.state.transitioning}>
           <div css={{ width: '100%', textAlign: 'center' }}>
             Checking invitation for <Blue>{this.state.recipient}</Blue>...
           </div>
