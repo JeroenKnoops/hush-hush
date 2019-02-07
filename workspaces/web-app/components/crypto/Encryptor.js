@@ -22,15 +22,6 @@ const getCurrentlySignedUser = () => {
   }
 }
 
-const read = async () => {
-  const uid = getCurrentlySignedUser()
-  if (uid) {
-    const db = firebase.firestore()
-    const doc = await db.collection('users').doc(uid).get()
-    console.log('doc=', doc.data())
-  }
-}
-
 const store = async (obj) => {
   const uid = getCurrentlySignedUser()
   if (uid) {
@@ -39,77 +30,111 @@ const store = async (obj) => {
     const doc = await db.collection('users').doc(uid).get()
     console.log('doc=', doc.data())
     db.collection('users').doc(uid).set(obj, { merge: true })
+  } else {
+    throw new Error('Having trouble accesing Firebase. Please try again...')
+  }
+}
+
+const storeSecret = async ({
+  senderTag,
+  encryptedSecret
+}) => {
+  const uid = getCurrentlySignedUser()
+  if (uid) {
+    console.log('uid=', uid)
+    console.log('senderTag=', senderTag)
+    console.log('encryptedSecret=', encryptedSecret)
+    const db = firebase.firestore()
+    const ref = db.collection('users').doc(uid)
+    await ref.update({
+      [`${senderTag}.recipient.encryptedSecret`]: encryptedSecret
+    })
+  } else {
+    throw new Error('Having trouble accesing Firebase. Please try again...')
   }
 }
 
 class Encryptor {
-  static encrypt = async ({ telepathChannel, plainText, recipient }) => {
-    const cogitoEncryption = new CogitoEncryption({ telepathChannel })
-    const cogitoKeyProvider = new CogitoKeyProvider({ telepathChannel })
-    const tag = await cogitoKeyProvider.createNewKeyPair()
-    const jsonWebKey = await cogitoKeyProvider.getPublicKey({ tag })
-    const cipherText = await cogitoEncryption.encrypt({ jsonWebKey, plainText })
-    const exchangeObject = {
-      tag,
-      cipherText,
-      senderPublicKey: jsonWebKey
-    }
-    const serializedState = JSON.stringify(exchangeObject)
-    localStorage.setItem(recipient, serializedState)
+  static encrypt = async ({
+    telepathChannel,
+    secret,
+    recipient,
+    senderTag,
+    recipientEncryptedPublicKey,
+    recipientTag,
+    onStatusChanged = () => {}
+  }) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const cogitoEncryption = new CogitoEncryption({ telepathChannel })
+        const recipientPublicKeyText = await cogitoEncryption.decrypt({
+          tag: senderTag,
+          encryptionData: recipientEncryptedPublicKey
+        })
+        const recipientPublicKey = JSON.parse(recipientPublicKeyText)
+        console.log('recipientPublicKey=', recipientPublicKey)
+        const encryptedSecret = await cogitoEncryption.encrypt({
+          jsonWebKey: recipientPublicKey,
+          plainText: secret
+        })
+        await storeSecret({
+          senderTag,
+          encryptedSecret
+        })
+        resolve()
+      } catch (e) {
+        console.error(e)
+        reject(e)
+      }
+    })
   }
 
-  static invite = async ({ telepathChannel, recipient }) => {
-    const cogitoEncryption = new CogitoEncryption({ telepathChannel })
-    const cogitoKeyProvider = new CogitoKeyProvider({ telepathChannel })
-    const tag = await cogitoKeyProvider.createNewKeyPair()
-    const jsonWebKey = await cogitoKeyProvider.getPublicKey({ tag })
+  static invite = ({ telepathChannel, recipient, onStatusChanged = () => {} }) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const cogitoKeyProvider = new CogitoKeyProvider({ telepathChannel })
+        const tag = await cogitoKeyProvider.createNewKeyPair()
+        const jsonWebKey = await cogitoKeyProvider.getPublicKey({ tag })
 
-    console.log('jsonWebKey=', jsonWebKey)
+        console.log('jsonWebKey=', jsonWebKey)
 
-    const symmetricKey = await createRandomKey()
-    console.log('symmetricKey=', symmetricKey.toString('hex'))
-    console.log('symmetricKey=', base64url.toBuffer(base64url.encode(symmetricKey)).toString('hex'))
-    // const symmetricKeyText = symmetricKey.toString('hex')
-    const nonce = await random(await nonceSize())
-    console.log('nonce=', nonce.toString('hex'))
-    console.log('nonce=', base64url.toBuffer(base64url.encode(nonce)).toString('hex'))
-    const encryptedSenderPublicKey = await encrypt(JSON.stringify(jsonWebKey), nonce, symmetricKey)
-    const encryptedSymmetricKey = await cogitoEncryption.encrypt({ jsonWebKey, plainText: base64url.encode(symmetricKey) })
+        const symmetricKey = await createRandomKey()
+        console.log('symmetricKey=', symmetricKey.toString('hex'))
+        console.log('symmetricKey=', base64url.toBuffer(base64url.encode(symmetricKey)).toString('hex'))
+        // const symmetricKeyText = symmetricKey.toString('hex')
+        const nonce = await random(await nonceSize())
+        console.log('nonce=', nonce.toString('hex'))
+        console.log('nonce=', base64url.toBuffer(base64url.encode(nonce)).toString('hex'))
+        const encryptedSenderPublicKey = await encrypt(JSON.stringify(jsonWebKey), nonce, symmetricKey)
 
-    const garbageBin = new CogitoGarbageBin({ telepathChannel })
-    try {
-      const uid = getCurrentlySignedUser()
-      if (uid) {
-        await garbageBin.store({
-          key: tag,
-          value: base64url.encode(symmetricKey)
-        })
-        await garbageBin.store({
-          key: base64url.encode(recipient),
-          value: tag
-        })
-        await store({
-          [`${tag}`]: {
-            sender: {
-              epub: base64url.encode(encryptedSenderPublicKey)
+        const garbageBin = new CogitoGarbageBin({ telepathChannel })
+        const uid = getCurrentlySignedUser()
+        if (uid) {
+          onStatusChanged('recording recipient address and tag in ', '[blue]Cogito iOS app')
+          await garbageBin.store({
+            key: base64url.encode(recipient),
+            value: tag
+          })
+          setTimeout(async () => {
+            try {
+              onStatusChanged('writing ', '[blue]encrypted sender public key ', 'in Firebase')
+              await store({
+                [`${tag}`]: {
+                  sender: {
+                    epub: base64url.encode(encryptedSenderPublicKey)
+                  }
+                }
+              })
+              resolve(`https://hush-hush.now.sh/invite#${base64url.encode(tag)}.${base64url.encode(symmetricKey)}.${base64url.encode(nonce)}`)
+            } catch (e) {
+              reject(e)
             }
-          }
-        })
-        await read()
+          }, 2000)
+        }
+      } catch (e) {
+        reject(e)
       }
-    } catch (e) {
-      console.error(e)
-    }
-
-    const exchangeObject = {
-      senderTag: tag,
-      encryptedSenderPublicKey: base64url.encode(encryptedSenderPublicKey),
-      encryptedSymmetricKey,
-      nonce: base64url.encode(nonce)
-    }
-    const serializedState = JSON.stringify(exchangeObject)
-    localStorage.setItem(recipient, serializedState)
-    return `https://hush-hush.now.sh/invite#${base64url.encode(tag)}.${base64url.encode(symmetricKey)}.${base64url.encode(nonce)}`
+    })
   }
 }
 

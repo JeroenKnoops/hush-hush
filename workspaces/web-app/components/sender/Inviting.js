@@ -4,7 +4,7 @@ import { IdentityFetcher } from '../identity'
 import { FadingValueBox } from '../animations'
 import { Button } from 'semantic-ui-react'
 import { Textarea } from '../forms'
-import { FormatBlue } from './FormatBlue'
+import { Red, Green, Blue } from '../ui'
 
 class Inviting extends React.Component {
   state = {
@@ -20,8 +20,12 @@ class Inviting extends React.Component {
 
   log = (...args) => {
     const status = args.map((a, i) => {
-      if (a[0] === '$') {
-        return <FormatBlue key={i}>{a.slice(1)}</FormatBlue>
+      if (a.startsWith('[green]')) {
+        return <Green key={i}>{a.slice('[green]'.length)}</Green>
+      } if (a.startsWith('[blue]')) {
+        return <Blue key={i}>{a.slice('[blue]'.length)}</Blue>
+      } if (a.startsWith('[red]')) {
+        return <Red key={i}>{a.slice('[red]'.length)}</Red>
       } else {
         return a
       }
@@ -29,23 +33,33 @@ class Inviting extends React.Component {
     this.setState({ status })
   }
 
+  onStatusChanged = (...args) => {
+    this.log(...args)
+  }
+
   inviteUser = async () => {
     const { recipient, telepathChannel } = this.props
     const identityInfo = await IdentityFetcher.get(telepathChannel)
     console.log('identityInfo=', identityInfo)
-    this.log('You are ', `$${identityInfo.username}`)
+    this.log('You are ', `[blue]${identityInfo.username}`)
     setTimeout(() => {
-      this.log('and your id is ', `$${identityInfo.ethereumAddress}`)
+      this.log('and your id is ', `[blue]${identityInfo.ethereumAddress}`)
       setTimeout(async () => {
-        this.log('creating invitation for ', `$${recipient}`)
-        const symmetricKey = await Encryptor.invite({
-          telepathChannel,
-          recipient
-        })
-        setTimeout(async () => {
-          this.setState({ done: true, status: symmetricKey })
-          this.setHeight()
-        }, 3000)
+        this.log('creating invitation for ', `[blue]${recipient}`)
+        try {
+          const symmetricKey = await Encryptor.invite({
+            telepathChannel,
+            recipient,
+            onStatusChanged: this.onStatusChanged
+          })
+          setTimeout(async () => {
+            this.setState({ done: true, status: symmetricKey })
+            this.setHeight()
+          }, 3000)
+        } catch (e) {
+          console.error(e)
+          this.log('[red]Hush!', e.message)
+        }
       }, 3000)
     }, 3000)
   }
@@ -107,7 +121,7 @@ class Inviting extends React.Component {
         { this.state.done &&
           <div css={{ display: 'flex', width: '100%', flexFlow: 'column nowrap', alignItems: 'center' }}>
             <div css={{ width: '100%', textAlign: 'center' }}>
-              This is the invitation link you need to send to <FormatBlue>{this.props.recipient}</FormatBlue>.
+              This is the invitation link you need to send to <Blue>{this.props.recipient}</Blue>.
             </div>
             <div css={{ width: '100%', textAlign: 'center', marginBottom: '50px' }}>
               Copy it, paste to your favorite email client and wait for your hush buddy to accept.

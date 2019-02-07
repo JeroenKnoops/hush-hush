@@ -25,13 +25,7 @@ class Secret extends Component {
 
   onSubmit = event => {
     this.props.onSubmit && this.props.onSubmit(this.state.secret)
-    this.setState({ secret: '' })
-    this.secretField.current.focus()
     event.preventDefault()
-  }
-
-  submitDisabled = () => {
-    return this.state.secret === ''
   }
 
   componentDidMount () {

@@ -1,58 +1,70 @@
 import React from 'react'
 import { Encryptor } from '../crypto'
-import { IdentityFetcher } from '../identity'
 import { FadingValueBox } from '../animations'
 import { Button } from 'semantic-ui-react'
 import { Textarea } from '../forms'
+import { Red, Green, Blue } from '../ui'
+import base64url from 'base64url'
 
 class Hushing extends React.Component {
   state = {
-    status: 'getting to know your identity...',
+    status: '',
     done: false,
-    copied: false
+    copied: false,
+    inProgress: true
   }
 
-  log = message => {
-    this.setState({ status: message })
+  constructor () {
+    super()
+    this.invitationField = React.createRef()
   }
 
-  inviteUser = async () => {
-    const { recipient, telepathChannel } = this.props
-    const identityInfo = await IdentityFetcher.get(telepathChannel)
-    console.log('identityInfo=', identityInfo)
-    this.log(`You are ${identityInfo.username}`)
-    setTimeout(() => {
-      this.log(`and your id is ${identityInfo.ethereumAddress}`)
-      setTimeout(async () => {
-        this.log(`creating invitation for ${recipient}`)
-        const symmetricKey = await Encryptor.invite({
-          telepathChannel,
-          recipient
-        })
-        setTimeout(async () => {
-          this.setState({ done: true, status: symmetricKey })
-        }, 3000)
-      }, 3000)
-    }, 3000)
+  log = (...args) => {
+    const status = args.map((a, i) => {
+      if (a.startsWith('[green]')) {
+        return <Green key={i}>{a.slice('[green]'.length)}</Green>
+      } if (a.startsWith('[blue]')) {
+        return <Blue key={i}>{a.slice('[blue]'.length)}</Blue>
+      } if (a.startsWith('[red]')) {
+        return <Red key={i}>{a.slice('[red]'.length)}</Red>
+      } else {
+        return a
+      }
+    })
+    this.setState({ status })
   }
 
-  sendContent = async () => {
-    const { secret, recipient, telepathChannel } = this.props
-    const identityInfo = await IdentityFetcher.get(telepathChannel)
-    console.log('identityInfo=', identityInfo)
-    this.log(`You are ${identityInfo.username}`)
-    setTimeout(() => {
-      this.log(`and your id is ${identityInfo.ethereumAddress}`)
-      setTimeout(async () => {
-        this.log(`encrypting your secret...`)
-        await Encryptor.encrypt({
-          telepathChannel,
-          plainText: secret,
-          recipient
-        })
-        this.log(`all good`)
-      }, 1000)
-    }, 1000)
+  onStatusChanged = (...args) => {
+    this.log(...args)
+  }
+
+  encrypt = async () => {
+    try {
+      const {
+        telepathChannel,
+        secret,
+        recipient,
+        senderTag,
+        recipientEncryptedPublicKey,
+        recipientTag
+      } = this.props
+      await Encryptor.encrypt({
+        telepathChannel,
+        secret,
+        recipient,
+        senderTag,
+        recipientEncryptedPublicKey,
+        recipientTag,
+        onStatusChanged: this.onStatusChanged
+      })
+      this.setState({
+        done: true,
+        status: `https://hush-hush.now.sh/secret#${base64url.encode(recipientTag)}`
+      })
+    } catch (e) {
+      console.error(e)
+      this.log('[red]Hush! ', e.message)
+    }
   }
 
   isOS = () => {
@@ -94,30 +106,49 @@ class Hushing extends React.Component {
     this.setState({ copied: true })
   }
 
-  async componentDidMount () {
-    if (this.props.invite) {
-      this.inviteUser()
-    } else {
-      this.sendContent()
-    }
+  setHeight = () => {
+    const area = this.invitationField.current
+    area.style.height = `${Number.parseInt(area.scrollHeight, 10) + 10}px`
+  }
+
+  componentDidMount () {
+    this.encrypt()
   }
 
   render () {
-    return (
-      <FadingValueBox trigger={this.state.status}>
-        {!this.state.done && <div css={{ width: '100%', textAlign: 'center', wordBreak: 'break-word' }}>
-          {this.state.status}
-        </div>}
-        { this.state.done &&
+    if (this.state.inProgress) {
+      return (
+        <FadingValueBox trigger={this.state.status}>
+          {!this.state.done && <div css={{ width: '100%', textAlign: 'center', wordBreak: 'break-word' }}>
+            {this.state.status}
+          </div>}
+        </FadingValueBox>
+      )
+    }
+    if (this.state.done) {
+      return (
+        <FadingValueBox>
           <div css={{ display: 'flex', width: '100%', flexFlow: 'column nowrap', alignItems: 'center' }}>
-            <Textarea id='invitation' css={{ height: '200px' }} readOnly value={this.state.status} />
+            <div css={{ width: '100%', textAlign: 'center' }}>
+              Your secret is ready to be shared with your hush budy.
+            </div>
+            <div css={{ width: '100%', textAlign: 'center', margin: '20px 0 20px 0' }}>
+              Copy it, paste to your favorite email client and send it to the recipient.
+            </div>
+            <div css={{ width: '100%', textAlign: 'center', marginBottom: '50px' }}>
+              BTW: you can share this link anyway you like. It is safe.
+              Only your intended hush budy will be able to decrypt the secret.
+              And that's gorgeous. Isn't it?
+            </div>
+            <Textarea id='secret-link' ref={this.invitationField} css={{ height: 'auto' }} onChange={this.setHeight} value={this.state.status} />
             <div css={{ display: 'flex', justifyContent: 'center', marginTop: '1rem', width: '100%' }}>
               <Button primary onClick={this.onCopy}>{this.state.copied ? 'Copied' : 'Copy to clipboard...'}</Button>
             </div>
           </div>
-        }
-      </FadingValueBox>
-    )
+        </FadingValueBox>
+      )
+    }
+    return null
   }
 }
 

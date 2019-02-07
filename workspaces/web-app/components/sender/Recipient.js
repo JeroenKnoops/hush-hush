@@ -3,6 +3,7 @@ import { FadingValueBox } from '../animations'
 
 import { Form, Input, Label } from '../forms'
 import { Connector } from '../identity'
+import { Blue } from '../ui'
 
 // From https://emailregex.com
 const emailValidationRegEx = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@(([[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -10,7 +11,8 @@ const emailValidationRegEx = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*
 class Recipient extends Component {
   state = {
     recipient: '',
-    validRecipient: false
+    validRecipient: false,
+    transitioning: false
   }
 
   constructor () {
@@ -32,6 +34,7 @@ class Recipient extends Component {
   }
 
   onDone = (telepathChannel) => {
+    this.setState({ transitioning: true })
     this.props.onSubmit && this.props.onSubmit(this.state.recipient, telepathChannel)
   }
 
@@ -45,6 +48,15 @@ class Recipient extends Component {
   }
 
   render () {
+    if (this.state.transitioning) {
+      return (
+        <FadingValueBox>
+          <div css={{ width: '100%', textAlign: 'center' }}>
+            Checking invitation for <Blue>{this.state.recipient}</Blue>...
+          </div>
+        </FadingValueBox>
+      )
+    }
     return (
       <FadingValueBox>
         <Form onSubmit={this.onSubmit}>
