@@ -60,7 +60,7 @@ class Hushing extends React.Component {
       console.log('Encryptor.encrypt finsihed!!!')
       this.setState({
         done: true,
-        status: `https://hush-hush.now.sh/secret#${base64url.encode(recipientTag)}`
+        status: `https://hush-hush.now.sh/secret#${base64url.encode(senderTag)}`
       })
       this.setHeight()
       console.log('Encryptor.encrypt:', this.state.done, this.state.status)

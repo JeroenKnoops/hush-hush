@@ -46,10 +46,10 @@ class ProcessInvitation extends React.Component {
           invitationOk: true,
           inProgress: false
         })
-        // this.log('invitation looks ', '[green]good')
       }, 3000)
     } catch (e) {
-      this.setState({ inProgress: true, status: e.message })
+      this.setState({ inProgress: true })
+      this.log('[red]Hush! ', e.message)
     }
   }
 
