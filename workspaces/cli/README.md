@@ -2,6 +2,12 @@
 
 ## Usage
 
+### Build
 ```
-node cli.js recipient "my secret"
+yarn build
+```
+
+### Run
+```
+./bin/hush-hush.js recipient "my secret"
 ```

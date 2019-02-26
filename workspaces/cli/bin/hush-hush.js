@@ -2,11 +2,10 @@
 
 const chalk = require('chalk')
 const program = require('commander')
-const lib = require('.')
-const pkg = require('./package.json')
+const HushHush = require('../lib/hush-hush').default
+const pkg = require('../package.json')
 
-const messages = lib.messages
-const hushHushApp = lib.hushHushApp
+const messages = require('../lib/messages')
 
 let recipient
 let secret
@@ -23,7 +22,7 @@ program
   .on('--help', messages.help)
   .parse(process.argv)
 
-hushHushApp({
+const hushHush = new HushHush({
   recipient,
   secret
 })
